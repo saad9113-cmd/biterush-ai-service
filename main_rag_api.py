@@ -12,7 +12,7 @@ print("GROQ KEY LOADED:", os.getenv("GROQ_API_KEY")[:10] if os.getenv("GROQ_API_
 
 app = FastAPI()
 
-model = SentenceTransformer('all-MiniLM-L6-v2')
+model = SentenceTransformer('paraphrase-MiniLM-L3-v2')
 client_db = chromadb.PersistentClient(path="./chroma_db")
 collection = client_db.get_or_create_collection("real_menu")
 
