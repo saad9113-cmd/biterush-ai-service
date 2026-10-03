@@ -6,7 +6,6 @@ import os
 
 load_dotenv()
 
-# --- Connect to Railway MySQL ---
 conn = mysql.connector.connect(
     host=os.getenv("DB_HOST"),
     user=os.getenv("DB_USER"),
@@ -27,7 +26,6 @@ conn.close()
 
 print(f"Fetched {len(menu_items)} available menu items.")
 
-# --- Infer veg/non-veg from item name ---
 NON_VEG_KEYWORDS = ["chicken", "mutton", "fish", "prawn", "egg", "beef", "pork", "meat"]
 
 def guess_veg_status(name):
@@ -37,7 +35,6 @@ def guess_veg_status(name):
             return "non-vegetarian"
     return "vegetarian"
 
-# --- Build text for embedding ---
 documents = []
 ids = []
 metadatas = []
@@ -53,14 +50,11 @@ for item in menu_items:
         "category": item["category"]
     })
 
-print("Sample embedding text:", documents[0])
-
-# --- Embed and store in Chroma ---
-model = SentenceTransformer('all-MiniLM-L6-v2')
+model = SentenceTransformer('paraphrase-MiniLM-L3-v2')
 embeddings = model.encode(documents).tolist()
 
 client = chromadb.PersistentClient(path="./chroma_db")
-collection = client.create_collection("real_menu")
+collection = client.get_or_create_collection("real_menu")
 
 collection.add(
     documents=documents,
